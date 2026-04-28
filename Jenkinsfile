@@ -9,12 +9,6 @@ pipeline {
 
     stages {
 
-        stage('Clone') {
-            steps {
-                git 'https://github.com/SanjeevCod3r/DevOps-L.git'
-            }
-        }
-
         stage('Build') {
             steps {
                 sh 'docker build -t hello-app .'
@@ -35,6 +29,14 @@ pipeline {
                 sh '''
                 docker tag hello-app:latest $ECR:latest
                 docker push $ECR:latest
+                '''
+            }
+        }
+
+        stage('Configure Kube') {
+            steps {
+                sh '''
+                aws eks update-kubeconfig --region $AWS_REGION --name hello-cluster
                 '''
             }
         }
